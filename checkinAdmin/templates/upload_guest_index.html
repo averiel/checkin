@@ -1,0 +1,11 @@
+{% include "base.html" %}
+{% if msg %}
+<p>{{ msg }}</p>
+{% endif %}
+
+<form action="{% url 'upload_guest' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type = "file" name="guest_list">
+    <input type ="submit" value="Upload" />
+</form>
+<p><a href="{% url 'download_guest' %}">Download guest list</a></p>
