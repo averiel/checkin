@@ -4,6 +4,7 @@ from checkinAdmin import views
 
 urlpatterns = patterns('',
   url(r'^$', views.index, name='index'),
+  url(r'^search$', views.search, name='search'),
   url(r'^checkin$', views.checkin, name='checkin'),
   url(r'^logout$', views.logout_view, name='logout'),
   url(r'^upload_guest_index$', views.upload_guest_index, name='upload_guest_index'),

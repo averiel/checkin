@@ -1,0 +1,7 @@
+{% if msg != None %}
+    {% if has_error == True %}
+        <font color="red">{{ msg }}</font>
+    {% else %}
+        <font>{{ msg }}</font>
+    {% endif %}
+{% endif %}

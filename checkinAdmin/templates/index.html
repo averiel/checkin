@@ -1,10 +1,42 @@
 {% include "base.html" %}
-{% if msg %}
-<p>{{ msg }}</p>
-{% endif %}
 
+<div>
+    <form action="{% url 'search' %}" method="post">
+        {% csrf_token %}
+        <input type = "text" name="confirmation_code" maxlength="5">
+        <input type ="submit" value="查找" />
+    </form>
+</div>
+
+{% include "msg.html" %}
+
+{% if guest != None %}
 <form action="{% url 'checkin' %}" method="post">
     {% csrf_token %}
-    <input type = "text" name="confirmation_code" maxlength="5">
-    <input type ="submit" value="Check In" />
+    <input type="hidden" value={{guest.confirmation_code}} name="confirmation_code"/>
+    <table>
+        <tr>
+            <th>姓名</th>
+            <th>验证码</th>
+            <th>时间</th>    
+            {% if guest.timestamp == None %}
+                <th>操作</th>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>{{ guest.name }}</td>
+            <td>{{ guest.confirmation_code }}</td>
+            <td>
+                {% if guest.timestamp != None %}
+                {{ guest.timestamp }}
+                {% endif %}
+            </td>
+            {% if guest.timestamp == None %}
+                <td>
+                    <input type="submit" value="签到" />
+                </td>
+            {% endif %}
+        </tr>
+    </table>
 </form>
+{% endif %}
