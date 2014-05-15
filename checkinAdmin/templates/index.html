@@ -14,28 +14,26 @@
 <form action="{% url 'checkin' %}" method="post">
     {% csrf_token %}
     <input type="hidden" value={{guest.confirmation_code}} name="confirmation_code"/>
-    <table>
+    <table border="1">
         <tr>
             <th>姓名</th>
             <th>验证码</th>
-            <th>时间</th>    
             {% if guest.timestamp == None %}
                 <th>操作</th>
+            {% else %}
+                <th>签到时间</th>   
             {% endif %}
         </tr>
         <tr>
             <td>{{ guest.name }}</td>
             <td>{{ guest.confirmation_code }}</td>
             <td>
-                {% if guest.timestamp != None %}
-                {{ guest.timestamp }}
-                {% endif %}
-            </td>
             {% if guest.timestamp == None %}
-                <td>
-                    <input type="submit" value="签到" />
-                </td>
+                <input type="submit" value="签到" />
+            {% else %}
+                {{ guest.timestamp }}
             {% endif %}
+            </td>
         </tr>
     </table>
 </form>

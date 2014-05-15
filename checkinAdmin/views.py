@@ -21,6 +21,9 @@ def guest2string(guest):
     else:
         return u'({0} {1} {2})'.format(guest.name , str(guest.confirmation_code) , str(guest.timestamp)) 
 
+def getCurrentUserName(request):
+    return request.user.username
+
 @login_required
 def index(request):
     msg = ''
@@ -38,13 +41,16 @@ def index(request):
 @login_required
 def search(request):
     confirmation_code = request.POST['confirmation_code']
-    logger.info('SEARCH: entry using confirmation code ' + str(confirmation_code))
+    logger.info('SEARCH: entry using confirmation code ' + str(confirmation_code) + ' by user ' + getCurrentUserName(request))
     guest = None
     msg = ''
     has_error = False
     try:
         guest = Guest.objects.get(confirmation_code=confirmation_code)
         logger.info('SEARCH: found guest ' + guest2string(guest))
+        if guest.timestamp != None:
+            msg = u'验证失败 验证码已使用'
+            has_error = True
     except Guest.DoesNotExist:
         logger.error('SEARCH: invalid confirmation_code ' + confirmation_code)
         guest = None
@@ -60,7 +66,7 @@ def checkin(request):
     confirmation_code = request.POST['confirmation_code']
     msg = ''
     has_error = False
-    logger.info('CHECKIN: checking in using confirmation code ' + str(confirmation_code))
+    logger.info('CHECKIN: checking in using confirmation code ' + str(confirmation_code) + ' by user ' + getCurrentUserName(request))
     try:
         with transaction.atomic():
             guest = Guest.objects.select_for_update().get(confirmation_code=confirmation_code)
@@ -100,7 +106,7 @@ def upload_guest_index(request):
 
 @staff_member_required
 def upload_guest(request):
-    logger.info('UPLOAD_GUEST entry')
+    logger.info('UPLOAD_GUEST entry by user ' + getCurrentUserName(request))
     file = request.FILES['guest_list']
     data = [row for row in csv.reader(file)][1:]
     msg = ''
@@ -133,7 +139,7 @@ def upload_guest(request):
 
 @staff_member_required
 def download_guest(request):
-    logger.info('DOWNLOAD_GUEST entry')
+    logger.info('DOWNLOAD_GUEST entry by user ' + getCurrentUserName(request))
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="guest_list.csv"'
     writer = csv.writer(response)
